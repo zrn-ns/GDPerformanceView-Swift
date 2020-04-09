@@ -31,9 +31,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-    #if DEBUG
-        PerformanceMonitor.shared().start()
-    #endif
+        #if DEBUG
+        if #available(iOS 13.0, *) {
+        } else {
+            PerformanceMonitor.shared().start()
+        }
+        #endif
 
         return true
     }
@@ -58,5 +61,28 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+    }
+}
+
+@available(iOS 13.0, *)
+class SceneDelegate: UIResponder, UISceneDelegate {
+    
+    static var window: UIWindow?
+    static var performanceView: PerformanceMonitor?
+    
+    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+        guard let windowScene = (scene as? UIWindowScene) else { return }
+        
+        let window = UIWindow(windowScene: windowScene)
+        Self.window = window
+        window.rootViewController = UIStoryboard(name: "Main", bundle: nil).instantiateInitialViewController()
+        window.makeKeyAndVisible()
+    }
+    
+    func sceneDidBecomeActive(_ scene: UIScene) {
+        #if DEBUG
+        Self.performanceView = PerformanceMonitor()
+        Self.performanceView?.start()
+        #endif
     }
 }
