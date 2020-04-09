@@ -68,7 +68,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 class SceneDelegate: UIResponder, UISceneDelegate {
     
     static var window: UIWindow?
-    static var performanceView: PerformanceMonitor?
     
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         guard let windowScene = (scene as? UIWindowScene) else { return }
@@ -81,8 +80,7 @@ class SceneDelegate: UIResponder, UISceneDelegate {
     
     func sceneDidBecomeActive(_ scene: UIScene) {
         #if DEBUG
-        Self.performanceView = PerformanceMonitor()
-        Self.performanceView?.start()
+        PerformanceMonitor.shared().start()
         #endif
     }
 }
