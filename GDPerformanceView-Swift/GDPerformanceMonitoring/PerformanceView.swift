@@ -76,7 +76,16 @@ internal class PerformanceView: UIWindow, PerformanceViewConfigurator {
     // MARK: Init Methods & Superclass Overriders
     
     required internal init() {
-        super.init(frame: PerformanceView.windowFrame(withPrefferedHeight: Constants.prefferedHeight))
+        if #available(iOS 13.0, *) {
+            let windowScene: UIWindowScene = UIApplication.shared
+                .connectedScenes
+                .filter({ $0.activationState == .foregroundActive })
+                .compactMap({ $0 as? UIWindowScene })
+                .first!
+            super.init(windowScene: windowScene)
+        } else {
+            super.init(frame: PerformanceView.windowFrame(withPrefferedHeight: Constants.prefferedHeight))
+        }
         
         self.configureWindow()
         self.configureMonitoringTextLabel()
@@ -337,9 +346,24 @@ private extension PerformanceView {
 
 private extension PerformanceView {
     class func windowFrame(withPrefferedHeight height: CGFloat) -> CGRect {
-        guard let window = UIApplication.shared.delegate?.window as? UIWindow else {
-            return .zero
+        
+        let keyWindow: UIWindow?
+        
+        if #available(iOS 13.0, *) {
+            keyWindow = UIApplication.shared
+                .connectedScenes
+                .filter({ $0.activationState == .foregroundActive })
+                .compactMap({ $0 as? UIWindowScene })
+                .first?
+                .windows
+                .filter({ $0.isKeyWindow })
+                .first
+                
+        } else {
+            keyWindow = UIApplication.shared.delegate?.window as? UIWindow
         }
+        
+        guard let window = keyWindow else { return .zero }
         
         var topInset: CGFloat = 0.0
         if #available(iOS 11.0, *), let safeAreaTop = window.rootViewController?.view.safeAreaInsets.top {
