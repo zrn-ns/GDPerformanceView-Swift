@@ -101,7 +101,7 @@ public class PerformanceMonitor {
     
     private static var sharedPerformanceMonitor: PerformanceMonitor!
     
-    private let performanceView = PerformanceView()
+    private lazy var performanceView = PerformanceView()
     private let performanceCalculator = PerformanceCalculator()
     private var state = States.paused
     
