@@ -99,9 +99,9 @@ public class PerformanceMonitor {
     
     // MARK: Private Properties
     
-    private static var sharedPerformanceMonitor: PerformanceMonitor!
+    private static var sharedPerformanceMonitor: PerformanceMonitor?
     
-    private lazy var performanceView = PerformanceView()
+    private var performanceView: PerformanceView
     private let performanceCalculator = PerformanceCalculator()
     private var state = States.paused
     
@@ -113,7 +113,10 @@ public class PerformanceMonitor {
     ///   - options: Display options. Allows to change the format of the displayed information.
     ///   - style: Style. Allows to change the appearance of the displayed information.
     ///   - delegate: Performance monitor output.
-    required public init(options: DisplayOptions = .default, style: Style = .dark, delegate: PerformanceMonitorDelegate? = nil) {
+    required public init?(options: DisplayOptions = .default, style: Style = .dark, delegate: PerformanceMonitorDelegate? = nil) {
+        guard let performanceView = PerformanceView.init(()) else { return nil }
+        
+        self.performanceView = performanceView
         self.performanceView.options = options
         self.performanceView.style = style
         
@@ -130,7 +133,7 @@ public class PerformanceMonitor {
     /// Initializes performance monitor singleton with default properties.
     ///
     /// - Returns: Performance monitor singleton.
-    public class func shared() -> PerformanceMonitor {
+    public class func shared() -> PerformanceMonitor? {
         if self.sharedPerformanceMonitor == nil {
             self.sharedPerformanceMonitor = PerformanceMonitor()
         }

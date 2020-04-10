@@ -34,7 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         #if DEBUG
         if #available(iOS 13.0, *) {
         } else {
-            PerformanceMonitor.shared().start()
+            PerformanceMonitor.shared()?.start()
         }
         #endif
 
@@ -80,7 +80,7 @@ class SceneDelegate: UIResponder, UISceneDelegate {
     
     func sceneDidBecomeActive(_ scene: UIScene) {
         #if DEBUG
-        PerformanceMonitor.shared().start()
+        PerformanceMonitor.shared()?.start()
         #endif
     }
 }
