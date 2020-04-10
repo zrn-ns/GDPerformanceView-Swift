@@ -75,16 +75,17 @@ internal class PerformanceView: UIWindow, PerformanceViewConfigurator {
     
     // MARK: Init Methods & Superclass Overriders
     
-    required internal init() {
+    // NOTE: fails if UIWindowScene was not connected.
+    internal convenience init?(_: Void) {
         if #available(iOS 13.0, *) {
-            let windowScene: UIWindowScene = UIApplication.shared
+            guard let windowScene: UIWindowScene = UIApplication.shared
                 .connectedScenes
                 .filter({ $0.activationState == .foregroundActive })
                 .compactMap({ $0 as? UIWindowScene })
-                .first!
-            super.init(windowScene: windowScene)
+                .first else { return nil }
+            self.init(windowScene: windowScene)
         } else {
-            super.init(frame: PerformanceView.windowFrame(withPrefferedHeight: Constants.prefferedHeight))
+            self.init(frame: PerformanceView.windowFrame(withPrefferedHeight: Constants.prefferedHeight))
         }
         
         self.configureWindow()
@@ -94,6 +95,15 @@ internal class PerformanceView: UIWindow, PerformanceViewConfigurator {
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+    }
+    
+    @available(iOS 13.0, *)
+    override init(windowScene: UIWindowScene) {
+        super.init(windowScene: windowScene)
+    }
+
+    override init(frame: CGRect) {
+        super.init(frame: frame)
     }
     
     override func layoutSubviews() {
